@@ -2,9 +2,7 @@
 /* vim: set ts=2: */
 
 /** drop target **/
-var _target = document.getElementById('drop');
 var _file = document.getElementById('file');
-var _grid = document.getElementById('grid');
 var _output = document.getElementById('output');
 var _doParseDataBtn = document.getElementById('doParseDataBtn');
 
@@ -12,10 +10,12 @@ var _doParseDataBtn = document.getElementById('doParseDataBtn');
 var spinner;
 
 var _workstart = function () {
-  // spinner = new Spinner().spin(_target);
+  // spinner = new Spinner();
+  console.log('[START] performance....', window.performance);
 };
 var _workend = function () {
   // spinner.stop();
+  console.log('[END] performance....', window.performance);
 };
 
 /** Alerts **/
@@ -44,49 +44,24 @@ var _failed = function (e) {
   );
 };
 
-/* make the buttons for the sheets */
-var make_buttons = function (sheetnames, cb) {
-  var buttons = document.getElementById('buttons');
-  buttons.innerHTML = '';
-  sheetnames.forEach(function (s, idx) {
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.name = 'btn' + idx;
-    btn.text = s;
-    var txt = document.createElement('h3');
-    txt.innerText = s;
-    btn.appendChild(txt);
-    btn.addEventListener(
-      'click',
-      function () {
-        cb(idx);
-      },
-      false
-    );
-    buttons.appendChild(btn);
-    buttons.appendChild(document.createElement('br'));
-  });
-};
-
 function renderOutput(json) {
-  _output.innerHTML = `<code>${JSON.stringify(json, null, 4)}</code>`;
+  const DISPLAY_ALL_JSON = false;
+
+  const jsonString = JSON.stringify(json, null, 4);
+  // don't display all
+  const chunked = jsonString.substring(0, 1000);
+
+  const displayValue = DISPLAY_ALL_JSON ? jsonString : chunked;
+
+  _output.innerHTML = `<code>${displayValue}</code>
+  <br/>
+
+
+  <h2>Value are chunked down</h2>
+  `;
 }
 
-function _resize() {
-  // _grid.style.height = window.innerHeight - 200 + 'px';
-  // _grid.style.width = window.innerWidth - 200 + 'px';
-}
-window.addEventListener('resize', _resize);
-
-var _onsheet = function (json, sheetnames, select_sheet_cb) {
-  // document.getElementById('footnote').style.display = 'none';
-
-  make_buttons(sheetnames, select_sheet_cb);
-
-  /* show grid */
-  // _grid.style.display = 'block';
-  _resize();
-
+var _onsheet = function (json) {
   /* set up table headers */
   var L = 0;
   json.forEach(function (r) {
@@ -105,7 +80,6 @@ var _onsheet = function (json, sheetnames, select_sheet_cb) {
 /** Drop it like it's hot **/
 DropSheet({
   file: _file,
-  drop: _target,
   parseBtn: _doParseDataBtn,
   on: {
     workstart: _workstart,
