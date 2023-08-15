@@ -69,6 +69,7 @@ var DropSheet = function DropSheet(opts) {
 
   function process_wb(wb, sheetidx) {
     last_wb = wb;
+    console.log(wb);
     opts.on.wb(wb, sheetidx);
     var sheet = wb.SheetNames[sheetidx || 0];
     var json = to_json(wb)[sheet];
