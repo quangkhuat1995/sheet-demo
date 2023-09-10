@@ -15,7 +15,9 @@ var DropSheet = function DropSheet(opts) {
   if (!opts.on.sheet) opts.on.sheet = nullfunc;
   if (!opts.on.wb) opts.on.wb = nullfunc;
 
-  var useworker = typeof Worker !== 'undefined';
+  var useworker =
+    false && typeof Worker !== 'undefined' && !!window.navigator.onLine;
+  console.log('useworker', useworker);
   var pending = false;
   var fileData;
 
